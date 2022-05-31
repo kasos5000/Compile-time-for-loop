@@ -32,13 +32,13 @@ for (auto i = End;  i >= Start; ++i) {
 };
 ```
 ### Termination
-There are also situations when the loop should be aborted in run time anyway (I personally encountered with such a situation). For this I added `break` and `continue`-like statements. In order to abort the execution of the loop you should type in the lambda:
+There are also situations when the loop should be aborted in run time anyway (I personally encountered with such a situation). For this I added `break` and `continue`-like statements. In order to abort the execution of the loop you should specify in the function:
 ```cpp
 return ConstexprLoop::Break;
 ```
-After this the loop will be unrolled and all its recursive templates will be instantiated, but none of the following instantiations will be called. The execution of the loop will stop here. Since the return type of the `expr` has changed, it will require to type `return ConstexprLoop::Continue` at the end of the lambda, where the iteration shouldn’t be the last.  
+After this the loop will be unrolled and all its recursive templates will be instantiated, but none of the following instantiations will be called. The execution of the loop will stop here. Since the return type of the `expr` has changed, it will require to specify `return ConstexprLoop::Continue` at the end of the lambda, where the iteration shouldn’t be the last.  
 See `examples.cpp` file for more information.
 ## Advantages of C++ 20 approach
-Before the introduction of generic lambdas it was more difficult to pass the counter into a constant expression. It was impossible to do this directly and it usually required to use instruments like std::integral_constant. Such approach is working, but makes the editor features (like code completion, error checking, etc.) less responsible.
+Before the emergence of generic lambdas it was more difficult to pass the counter into a constant expression. It was impossible to do this directly and it usually required to use instruments like std::integral_constant. Such approach is working, but makes the editor features (like code completion, error checking, etc.) less responsible.
 ## Installation
 Add `constexpr_for.hpp` file into your project.

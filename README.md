@@ -11,7 +11,7 @@ constexpr void for_constexpr(Func&& expr)
 `Start` – the beginning of the loop.  
 `End` – the end of the loop.  
 `Inc` – the increment.  
-`expr` – a function object, usually passed as a lambda, that has one templated argument of an integral type (C++ 20 generic lambda), like the following:  
+`expr` – the main expression: a function object, usually passed as a lambda, that has one templated argument of an integral type (C++ 20 generic lambda), like the following:  
 ```cpp
 [/*capture something*/]<IntegralType counter>() {
 		//do something
@@ -32,11 +32,14 @@ for (auto i = End;  i >= Start; ++i) {
 };
 ```
 ### Termination
-There are also situations when the loop should be aborted in run time anyway (I personally encountered with such a situation). For this I added `break` and `continue`-like statements. In order to abort the execution of the loop you should specify in the function:
+#### Run time execution abortion
+There are also situations when the loop should be aborted in run time anyway (I personally encountered with such a situation). For this I added `break` and `continue`-like statements. In order to abort the execution of the loop you should specify in the main expression:
 ```cpp
 return ConstexprLoop::Break;
 ```
-After this the loop will be unrolled and all its recursive templates will be instantiated, but none of the following instantiations will be called. The execution of the loop will stop here. Since the return type of the `expr` has changed, it will require to specify `return ConstexprLoop::Continue` at the end of the lambda, where the iteration shouldn’t be the last.  
+After this the loop will be unrolled and all its recursive templates will be instantiated, but none of the following instantiations will be called. The execution of the loop will stop here. Since the return type of the `expr` has changed, it will require to specify `return ConstexprLoop::Continue` at the end of the main expression, where the iteration shouldn’t be the last.  
+#### Compile time termination. Non-void loops
+This kind of loops could also be terminated by a more complex condition then a simple upper bound value. For this you need to have the main expression return a value of a type distinct from ConstexprLoop::RunTimeAction. The same approach could be used if you need to initialize a constexpr value using this loop.  
 See `examples.cpp` file for more information.
 ## Advantages of C++ 20 approach
 Before the emergence of generic lambdas it was more difficult to pass the counter into a constant expression. It was impossible to do this directly and it usually required to use instruments like std::integral_constant. Such approach is working, but makes the editor features (like code completion, error checking, etc.) less responsible.

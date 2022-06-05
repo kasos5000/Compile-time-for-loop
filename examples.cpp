@@ -38,5 +38,23 @@ int main() {
 		cout << *get<I>(ptr_tuple) << "; ";
 		return ConstexprLoop::Continue;
 	});
+
+	cout << "\nNon-void (compile time terminated) loop:";
+	constexpr array<int, 5> Nums{3, 4, 10, 7, 4};
+	constexpr size_t WhereIsTen = for_constexpr<0, Nums.size()>([&Nums]<size_t I>() {
+		static_assert(I < 3, "");
+		if constexpr (Nums[I] == 10) { // More complex stop condition
+			return I;
+		}
+	});
+	cout << "\n10 is at the position " << WhereIsTen;
+
+	// constexpr size_t WhereIsOne = for_constexpr<0, Nums.size()>([&Nums]<size_t I>() {
+	// 	if constexpr (Nums[I] == 1) {
+	// 		return I;
+	// 	}
+	// });
+	// Error: there's no 1 in Nums, so the return type will be void
+
 	cout << "\nDone!";
 }

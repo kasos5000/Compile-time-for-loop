@@ -4,7 +4,7 @@ There are occasions when plain C++ loops are not enough. For example, the counte
 ## Syntax info
 The general syntax of the function that imitates compile-time `for` loop follows:
 ```cpp
-template<auto Start, auto End, int Inc = 1, typename Func1, typename Func2  = std::nullptr_t>
+template<auto Start, auto End, int Inc = 1, typename Func1, typename Func2 = std::nullptr_t>
 constexpr void for_constexpr(Func1 main_expr, Func2 fin_expr = nullptr)
 ```
 ### Parameters

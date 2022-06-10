@@ -7,15 +7,20 @@ using namespace std;
 int main() {
 	tuple<int, double, string, size_t> my_tuple{1, 1.5, "hello, constexpr for", 2};
 	constexpr size_t Size1 = tuple_size_v<decltype(my_tuple)>;
-	cout << "Strait loop:\n";
+	
+	cout << "Simple loop:\n";
 	for_constexpr<0, Size1>([&my_tuple]<size_t I>() {
 		cout << get<I>(my_tuple) << "; ";
 	});
 
 	cout << "\nReversed loop:\n";
-	for_constexpr<Size1 - 1, 0, -1>([&my_tuple]<size_t I>() {
-		cout << get<I>(my_tuple) << "; ";
-	});
+	for_constexpr<Size1 - 1, 0, -1>(
+	    [&my_tuple]<size_t I>() {
+		    cout << get<I>(my_tuple) << "; ";
+	    },
+	    []() {
+		    cout << "\nfinalizing...";
+	    });
 
 	cout << "\nSkip loop:\n";
 	for_constexpr<0, Size1, 2>([&my_tuple]<size_t I>() {
@@ -49,12 +54,20 @@ int main() {
 	});
 	cout << "\n10 is at the position " << WhereIsTen;
 
-	// constexpr size_t WhereIsOne = for_constexpr<0, Nums.size()>([&Nums]<size_t I>() {
-	// 	if constexpr (Nums[I] == 1) {
-	// 		return I;
-	// 	}
-	// });
-	// Error: there's no 1 in Nums, so the return type will be void
+	constexpr size_t WhereIsOne = for_constexpr<0, Nums.size()>(
+	    [&Nums]<size_t I>() {
+		    if constexpr (Nums[I] == 1) {
+			    return I;
+		    }
+	    }, // Error for now: there's no 1 in Nums, so the return type will be void. But we can return something using a final expression:
+	    []() {
+		    return 364564;
+	    });
+	if constexpr (WhereIsOne < Nums.size()) {
+		cout << "\n10 is at the position " << WhereIsOne;
+	} else {
+		cout << "\n1 is not found";
+	}
 
 	cout << "\nDone!";
 }

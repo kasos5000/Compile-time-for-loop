@@ -4,19 +4,20 @@ There are occasions when plain C++ loops are not enough. For example, the counte
 ## Syntax Info
 The general syntax of the constexpr for function is following:
 ```cpp
-template<auto Start, auto End, int Inc = 1, typename Func>
-constexpr void for_constexpr(Func&& expr)
+template<auto Start, auto End, int Inc = 1, typename Func1, typename Func2  = std::nullptr_t>
+constexpr void for_constexpr(Func1 main_expr, Func2 fin_expr = nullptr)
 ```
 ### Parameters
 `Start` – the beginning of the loop.  
 `End` – the end of the loop.  
-`Inc` – the increment.  
-`expr` – the main expression: a function object, usually passed as a lambda, that has one templated argument of an integral type (C++ 20 generic lambda), like the following:  
+`Inc` – the increment (1 by default).  
+`main_expr` – the main expression: a function object, usually passed as a lambda, that has one templated argument of an integral type (C++ 20 generic lambda), like the following:  
 ```cpp
 [/*capture something*/]<IntegralType counter>() {
 		//do something
 	});
 ```
+(optional) `fin_expr` - the expression that should be executed after the loop.
 ### Types Of Loops
 Reversed loops are also supported. In non-reversed loops the End value does not enter the loop, in reversed – both Start and End enter. In general, the behavior of the loop could be described as following:  
 Non-reversed:  
@@ -43,5 +44,3 @@ This kind of loops could also be terminated by a more complex condition then a s
 See `examples.cpp` file for more information.
 ## Advantages of C++ 20 approach
 Before the emergence of generic lambdas it was more difficult to pass the counter into a constant expression. It was impossible to do this directly and it usually required to use instruments like std::integral_constant. Such approach is working, but makes the editor features (like code completion, error checking, etc.) less responsible.
-## Installation
-Add `constexpr_for.hpp` file into your project.

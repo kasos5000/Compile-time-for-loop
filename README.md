@@ -38,9 +38,9 @@ There are also situations when the loop should be aborted in run-time anyway (I 
 ```cpp
 return ConstexprLoop::Break;
 ```
-After this the loop will be unrolled and all its recursive templates will be instantiated, but none of the following instantiations will be called. The execution of the loop will stop here. Since the return type of the `expr` has changed, it will require to specify `return ConstexprLoop::Continue` at the end of the main expression, where the iteration shouldn’t be the last.  
+After this the loop will be unrolled and all its recursive templates will be instantiated, but none of the following instantiations, including the final expression, will be called. The execution of the loop will stop here. Since the return type of the `expr` has changed, it will require to specify `return ConstexprLoop::Continue` at the end of the main expression, where the iteration shouldn’t be the last. The loop-imitating function itself has always to be void in this case.    
 #### Compile-time termination. Non-void loops
-This kind of loops could also be terminated by a more complex condition then a simple upper bound value. For this you need to have the main expression return a value of a type distinct from ConstexprLoop::RunTimeAction. The same approach could be used if you need to initialize a constexpr value using this loop.  
+This kind of loops could also be terminated by a more complex condition than a simple upper bound value. For this you need to have the main expression return a value of a type distinct from ConstexprLoop::RunTimeAction. The same approach could be used if you need to initialize a constexpr value using this loop.  
 See `examples.cpp` file for more information.
 ## Advantages of C++ 20 approach
 Before the emergence of generic lambdas it was more difficult to pass the counter into a constant expression. It was impossible to do this directly and it usually required to use instruments like std::integral_constant. Such approach is working, but makes the editor features (like code completion, error checking, etc.) less responsible.

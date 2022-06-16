@@ -3,11 +3,11 @@
 #include <type_traits>
 
 template<auto Start, auto End, int Inc = 1, typename Func1, typename Func2 = std::nullptr_t>
-constexpr decltype(auto) for_constexpr(Func1 main_expr, Func2 fin_expr = nullptr);
+constexpr decltype(auto) for_constexpr(Func1&& main_expr, Func2&& fin_expr = nullptr);
 
 class ConstexprLoop {
 	template<auto Current, auto End, int Inc, typename Func1, typename Func2>
-	static constexpr decltype(auto) Recursion(Func1 main_expr, Func2 fin_expr) {
+	static constexpr decltype(auto) Recursion(Func1&& main_expr, Func2&& fin_expr) {
 		constexpr bool NotLast = Inc > 0 ? Current < End : Current >= End;
 		using ExprRes = std::invoke_result_t<decltype(main_expr.template operator()<Current>())()>;
 		if constexpr (std::is_same_v<ExprRes, RunTimeAction>) {
@@ -32,17 +32,15 @@ class ConstexprLoop {
 	}
 
 	template<auto Start, auto End, int Inc, typename Func1, typename Func2>
-	friend constexpr decltype(auto) for_constexpr(Func1, Func2);
+	friend constexpr decltype(auto) for_constexpr(Func1&&, Func2&&);
 
 public:
 	enum RunTimeAction : bool {Continue, Break};
 };
 
 template<auto Start, auto End, int Inc, typename Func1, typename Func2>
-constexpr decltype(auto) for_constexpr(Func1 main_expr, Func2 fin_expr) {
+constexpr decltype(auto) for_constexpr(Func1&& main_expr, Func2&& fin_expr) {
 	if constexpr (Start != End) {
-		static_assert(Start < End || Inc < 0, "This will lead to an endless loop");
-		static_assert(Start > End || Inc > 0, "This will lead to an endless loop");
 		return ConstexprLoop::Recursion<Start, End - Inc, Inc>(main_expr, fin_expr);
 	}
 }
